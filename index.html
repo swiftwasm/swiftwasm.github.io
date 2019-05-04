@@ -10,6 +10,10 @@
 	background-color: #f05138;
 	background-image: linear-gradient(to bottom, #f05138 70%, #fbaf40);
 }
+#code-area {
+  width: 100%;
+  height: 500px;
+}
 </style>
 </head>
 <body>
@@ -18,7 +22,7 @@
     <div class="row">
       <div class="col">
         <h1>SwiftWasm</h1>
-        <p>Run <strong>Swift</strong> code in <strong>Browsers</strong> with <strong>WebAssembly</strong></p>
+        <p>Run your <strong>Swift</strong> code in <strong>Browsers</strong> with <strong>WebAssembly</strong></p>
       </div>
       <div class="col">
         <a href="https://github.com/swiftwasm/swift/releases" class="btn">Download</a>
@@ -32,5 +36,22 @@
 <div class="container">
   <h1>Content here</h1>
 </div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div><button id="code-run">Run</button></div>
+      <textarea id="code-area" class="text-monospace" disabled></textarea>
+    </div>
+    <div class="col">
+      <div>Output:</div>
+      <textarea id="output-area"></textarea>
+    </div>
+    <div class="col">
+      <div>WebAssembly asm:</div>
+      <pre></pre>
+    </div>
+  </div>
+</div>
+<script src="home.js"></script>
 </body>
 </html>
