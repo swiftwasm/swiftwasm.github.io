@@ -4,6 +4,9 @@ const kPrecompiledDemo = false;
 
 var codeArea = null;
 var runButton = null;
+var outputArea = null;
+var downloadWasmButton = null;
+var currentDownloadURL = null;
 
 function polyfillReady(polyfillFunction) {
     startWasiPolyfill = polyfillFunction;
@@ -17,14 +20,23 @@ function pageLoaded() {
     }
     runButton = document.getElementById("code-run");
     runButton.addEventListener("click", runClicked);
+    outputArea = document.getElementById("output-area");
+    downloadWasmButton = document.getElementById("code-download-wasm");
 }
 
 async function runClicked() {
     runButton.disabled = true;
+    downloadWasmButton.style.display = "none";
+    if (currentDownloadURL) {
+        URL.revokeObjectURL(currentDownloadURL);
+    }
     const code = codeArea.value;
     try {
         const compileResult = await compileCode(code);
-        console.log(compileResult);
+        populateResultsArea(compileResult);
+        if (compileResult.output.success) {
+            await runWasm(compileResult.binary);
+        }
     } catch (e) {
         console.log(e);
     }
@@ -71,6 +83,27 @@ function parseResultBuffer(resultBuffer) {
         output.binary = resultBuffer.slice(8 + jsonLength);
     }
     return output;
+}
+
+/**
+ * @param wasmBuffer {ArrayBuffer}
+ */
+async function runWasm(wasmBuffer) {
+
+}
+
+function populateResultsArea(compileResult) {
+    console.log(compileResult);
+    const output = compileResult.output;
+    outputArea.textContent = output.output;
+    downloadWasmButton.style.display = output.success? "": "none";
+    if (output.binary) {
+        currentDownloadURL = URL.createObjectURL(output.binary);
+        downloadWasmButton.href = currentDownloadURL;
+    }
+}
+
+function downloadWasmClicked(output) {
 }
 
 // Demo script
