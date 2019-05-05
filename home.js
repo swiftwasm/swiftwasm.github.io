@@ -1,6 +1,9 @@
 "use strict";
+const kCompileApi = "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
+const kPrecompiledDemo = false;
 
 var codeArea = null;
+var runButton = null;
 
 function polyfillReady(polyfillFunction) {
     startWasiPolyfill = polyfillFunction;
@@ -12,6 +15,26 @@ function pageLoaded() {
     if (codeArea.value == "") {
         codeArea.value = kDefaultDemoScript;
     }
+    runButton = document.getElementById("run-button");
+    runButton.addEventListener("click", runClicked);
+}
+
+async function runClicked() {
+	runButton.disabled = true;
+	const code = codeArea.value;
+	try {
+		const compileResult = await compileCode(code);
+	} catch (e) {
+		console.log(e);
+	}
+	runButton.disabled = false;
+}
+
+async function compileCode(code) {
+	let compileResult = null;
+	if (kPrecompiledDemo && code.strip() == kDefaultDemoScript.strip()) {
+		return await getPrecompiledDemo();
+	}
 }
 
 // Demo script
