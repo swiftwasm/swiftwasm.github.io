@@ -97,8 +97,9 @@ function populateResultsArea(compileResult) {
     const output = compileResult.output;
     outputArea.textContent = output.output;
     downloadWasmButton.style.display = output.success? "": "none";
-    if (output.binary) {
-        currentDownloadURL = URL.createObjectURL(output.binary);
+    if (compileResult.binary) {
+        const blob = new Blob([compileResult.binary], {type: "application/wasm"});
+        currentDownloadURL = URL.createObjectURL(blob);
         downloadWasmButton.href = currentDownloadURL;
     }
 }
