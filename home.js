@@ -15,26 +15,62 @@ function pageLoaded() {
     if (codeArea.value == "") {
         codeArea.value = kDefaultDemoScript;
     }
-    runButton = document.getElementById("run-button");
+    runButton = document.getElementById("code-run");
     runButton.addEventListener("click", runClicked);
 }
 
 async function runClicked() {
-	runButton.disabled = true;
-	const code = codeArea.value;
-	try {
-		const compileResult = await compileCode(code);
-	} catch (e) {
-		console.log(e);
-	}
-	runButton.disabled = false;
+    runButton.disabled = true;
+    const code = codeArea.value;
+    try {
+        const compileResult = await compileCode(code);
+        console.log(compileResult);
+    } catch (e) {
+        console.log(e);
+    }
+    runButton.disabled = false;
 }
 
 async function compileCode(code) {
-	let compileResult = null;
-	if (kPrecompiledDemo && code.strip() == kDefaultDemoScript.strip()) {
-		return await getPrecompiledDemo();
-	}
+    if (kPrecompiledDemo && code.strip() == kDefaultDemoScript.strip()) {
+        return await getPrecompiledDemo();
+    }
+    const fetchResult = await fetch(kCompileApi, {
+        method: "POST",
+        body: JSON.stringify({
+            src: code
+        }),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const resultBuffer = await fetchResult.arrayBuffer();
+    return parseResultBuffer(resultBuffer);
+}
+
+/**
+ * @param resultBuffer {ArrayBuffer}
+ */
+function parseResultBuffer(resultBuffer) {
+    const textDecoder = new TextDecoder("utf-8");
+    let uint32View = null;
+    if (resultBuffer.byteLength >= 8) {
+        uint32View = new Uint32Array(resultBuffer.slice(0, 8));
+    }
+    if (uint32View == null || uint32View[0] != 0xdec0ded0) {
+        return {output:
+            {success: false, output: textDecoder.decode(resultBuffer)}
+        };
+    }
+    const jsonLength = uint32View[1];
+    const jsonBuffer = resultBuffer.slice(8, 8 + jsonLength);
+    let output = {
+        output: JSON.parse(textDecoder.decode(jsonBuffer))
+    };
+    if (8 + jsonLength < resultBuffer.byteLength) {
+        output.binary = resultBuffer.slice(8 + jsonLength);
+    }
+    return output;
 }
 
 // Demo script
