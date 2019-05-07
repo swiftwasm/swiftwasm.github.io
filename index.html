@@ -29,6 +29,13 @@ a, a:hover, a:visited {
   color: inherit;
   text-decoration: underline;
 }
+#download-button {
+  color: #f05138;
+  text-decoration: none;
+}
+#other-platforms {
+  font-size: 10pt;
+}
 </style>
 </head>
 <body>
@@ -40,10 +47,10 @@ a, a:hover, a:visited {
         <p><strong>SwiftWasm</strong> compiles your <strong>Swift</strong> code to <strong>WebAssembly</strong>.</string></p>
         <p><a href="https://github.com/swiftwasm">Source on GitHub</a></p>
       </div>
-      <div class="col-md">
-        <a href="https://github.com/swiftwasm/swift/releases" class="btn">Download</a>
-        <div>for macOS.
-          <a href="https://github.com/swiftwasm/swift/releases">Other platforms</a>.
+      <div class="col-md-4">
+        <a href="https://github.com/swiftwasm/swift/releases" id="download-button" class="btn btn-lg btn-light btn-block">Download</a>
+        <div id="other-platforms">
+          <span id="windows-wsl"></span><a href="https://github.com/swiftwasm/swift/releases">Other platforms</a>
         </div>
       </div>
     </div>
@@ -54,6 +61,7 @@ a, a:hover, a:visited {
 </div>
 <div class="container shadow rounded border my-3 py-3">
   <h2>Try it now</h2>
+  <noscript>Please enable JavaScript to use the Try it Now area.</noscript>
   <div class="row">
     <div class="col-lg">
       <div><button id="code-run">Run</button></div>

@@ -2,6 +2,11 @@
 const kCompileApi = "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
 const kPrecompiledDemo = false;
 
+const kDownloadUrls = {
+    macos: ["macOS", "https://localhost/macos"],
+    linux: ["Linux", "https://localhost/linux"]
+}
+
 var codeArea = null;
 var runButton = null;
 var outputArea = null;
@@ -23,6 +28,7 @@ function pageLoaded() {
     runButton.addEventListener("click", runClicked);
     outputArea = document.getElementById("output-area");
     downloadWasmButton = document.getElementById("code-download-wasm");
+    setupDownloadArea();
 }
 
 async function runClicked() {
@@ -126,6 +132,31 @@ function handleCodeAreaKeyPress(event) {
 
 function wasi_handle_error(e) {
     Module.print(e.toString() + "\n" + e.stack);
+}
+
+function setupDownloadArea() {
+    const downloadButton = document.getElementById("download-button");
+    const platform = detectPlatform();
+    const isWindows = platform == "windows";
+    const platformActual = isWindows? "linux": platform;
+    const platformName = isWindows? "Windows": kDownloadUrls[platformActual][0];
+    const downloadUrl = kDownloadUrls[platformActual][1];
+    downloadButton.textContent = "Download for " + platformName;
+    downloadButton.href = downloadUrl;
+    if (isWindows) {
+        document.getElementById("windows-wsl").textContent = "Requires Windows Subsystem for Linux. ";
+    }
+}
+
+function detectPlatform() {
+    const userAgent = navigator.userAgent;
+    if (userAgent.indexOf("Mac OS X") != -1) {
+        return "macos";
+    }
+    if (userAgent.indexOf("Windows") != -1) {
+        return "windows";
+    }
+    return "linux";
 }
 
 // Demo script
