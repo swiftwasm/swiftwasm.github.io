@@ -64,7 +64,6 @@ a, a:hover, a:visited {
           download="program.wasm">Download wasm</a>
       </div>
       <div id="output-area" class="text-monospace"></div>
-      <div>Run the downloaded .wasm file in the <a href="/polyfill/">WASI polyfill</a>.</div>
     </div>
   </div>
 </div>
@@ -78,5 +77,7 @@ a, a:hover, a:visited {
   <p>This website may collect information about you to improve your experience. <a href="privacy.html" target="_blank">Privacy policy</a>.</p>
 </div>
 <script src="home.js"></script>
+<script src="home_polyfill/polyfill_outer.js"></script>
+<script async src="home_polyfill/polyfill.js"></script>
 </body>
 </html>

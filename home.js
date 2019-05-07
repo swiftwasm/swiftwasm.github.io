@@ -18,6 +18,7 @@ function pageLoaded() {
     if (codeArea.value == "") {
         codeArea.value = kDefaultDemoScript;
     }
+    codeArea.addEventListener("keydown", handleCodeAreaKeyPress);
     runButton = document.getElementById("code-run");
     runButton.addEventListener("click", runClicked);
     outputArea = document.getElementById("output-area");
@@ -35,7 +36,7 @@ async function runClicked() {
         const compileResult = await compileCode(code);
         populateResultsArea(compileResult);
         if (compileResult.output.success) {
-            await runWasm(compileResult.binary);
+            runWasm(compileResult.binary);
         }
     } catch (e) {
         console.log(e);
@@ -88,8 +89,9 @@ function parseResultBuffer(resultBuffer) {
 /**
  * @param wasmBuffer {ArrayBuffer}
  */
-async function runWasm(wasmBuffer) {
-
+function runWasm(wasmBuffer) {
+    window.wasi_wasm_buffer = wasmBuffer;
+    _handleFiles();
 }
 
 function populateResultsArea(compileResult) {
@@ -104,7 +106,20 @@ function populateResultsArea(compileResult) {
     }
 }
 
-function downloadWasmClicked(output) {
+/**
+ * 
+ * @param {KeyboardEvent} event 
+ */
+function handleCodeAreaKeyPress(event) {
+    if (event.keyCode == 9 /* tab */) {
+        event.preventDefault();
+        var selectionStart = codeArea.selectionStart;
+        codeArea.value = codeArea.value.substring(0, selectionStart) +
+            "    " + codeArea.value.substring(codeArea.selectionEnd);
+        codeArea.selectionStart = codeArea.selectionEnd = selectionStart + 4;
+        return false;
+    }
+    return true;
 }
 
 // Demo script
