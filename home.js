@@ -122,6 +122,10 @@ function handleCodeAreaKeyPress(event) {
     return true;
 }
 
+function wasi_handle_error(e) {
+    Module.print(e.toString() + "\n" + e.stack);
+}
+
 // Demo script
 const kDefaultDemoScript = `import Glibc
 
