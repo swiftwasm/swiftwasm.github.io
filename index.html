@@ -36,6 +36,19 @@ a, a:hover, a:visited {
 #other-platforms {
   font-size: 10pt;
 }
+#code-run {
+  background-color: #f05138;
+  border-color: #f05138;
+  color: white;
+}
+#code-run:hover {
+  background-color: #cc4530;
+  border-color: #cc4530;
+}
+#code-run:active {
+  background-color: #b33c2a;
+  border-color: #b33c2a;
+}
 </style>
 </head>
 <body>
@@ -60,11 +73,11 @@ a, a:hover, a:visited {
   <h2>Content here</h2>
 </div>
 <div class="container shadow rounded border my-3 py-3">
-  <h2>Try it now</h2>
+  <h2>Try Swift on WebAssembly now</h2>
   <noscript>Please enable JavaScript to use the Try it Now area.</noscript>
   <div class="row">
     <div class="col-lg">
-      <div><button id="code-run">Run</button></div>
+      <div><button id="code-run" class="btn">Run</button></div>
       <textarea id="code-area" class="text-monospace" disabled></textarea>
     </div>
     <div class="col-lg">
