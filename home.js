@@ -165,7 +165,7 @@ func fib(n: Int) -> Int {
     return b
 }
 
-print("The 10th Fibonacci number is \(fib(n: 10))")
+print("The 10th Fibonacci number is \\(fib(n: 10))")
 
 // we can also run JavaScript from Swift.
 
@@ -178,7 +178,7 @@ func executeScript(script: String) {
 }
 
 // Here's a string holding JavaScript code, with some string interpolation:
-let scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \(fib(n: 11))');"
+let scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \\(fib(n: 11))');"
 // and we can execute it.
 executeScript(script: scriptSrc)
 `;
