@@ -28,6 +28,7 @@ function pageLoaded() {
 async function runClicked() {
     runButton.disabled = true;
     downloadWasmButton.style.display = "none";
+    outputArea.textContent = "Compiling...";
     if (currentDownloadURL) {
         URL.revokeObjectURL(currentDownloadURL);
     }
@@ -91,6 +92,7 @@ function parseResultBuffer(resultBuffer) {
  */
 function runWasm(wasmBuffer) {
     window.wasi_wasm_buffer = wasmBuffer;
+    Module.print("Running WebAssembly...");
     _handleFiles();
 }
 
@@ -176,7 +178,7 @@ func executeScript(script: String) {
 }
 
 // Here's a string holding JavaScript code, with some string interpolation:
-let scriptSrc = "alert('The 11th Fibonacci number is \(fib(n: 11))');"
+let scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \(fib(n: 11))');"
 // and we can execute it.
 executeScript(script: scriptSrc)
 `;
