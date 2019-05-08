@@ -1,6 +1,6 @@
 "use strict";
 const kCompileApi = "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
-const kPrecompiledDemo = false;
+const kPrecompiledDemo = true;
 
 const kDownloadUrls = {
     macos: ["macOS", "https://localhost/macos"],
@@ -52,7 +52,7 @@ async function runClicked() {
 }
 
 async function compileCode(code) {
-    if (kPrecompiledDemo && code.strip() == kDefaultDemoScript.strip()) {
+    if (kPrecompiledDemo && code.trim() == kDefaultDemoScript.trim()) {
         return await getPrecompiledDemo();
     }
     const fetchResult = await fetch(kCompileApi, {
@@ -157,6 +157,18 @@ function detectPlatform() {
         return "windows";
     }
     return "linux";
+}
+
+async function getPrecompiledDemo() {
+    const fetchResult = await fetch("/demo_compiled/program.wasm.txt");
+    const resultBuffer = await fetchResult.arrayBuffer();
+    return {
+        output: {
+            success: true,
+            output: ""
+        },
+        binary: resultBuffer
+    }
 }
 
 // Demo script
