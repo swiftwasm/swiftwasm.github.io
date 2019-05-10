@@ -3,8 +3,8 @@ const kCompileApi = "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/co
 const kPrecompiledDemo = true;
 
 const kDownloadUrls = {
-    macos: ["macOS", "https://localhost/macos"],
-    linux: ["Linux", "https://localhost/linux"]
+    macos: ["macOS", "https://github.com/swiftwasm/swift/releases/download/swiftwasm-release-v20190510/swiftwasm-sdk-macos.tar.xz"],
+    linux: ["Linux", "https://github.com/swiftwasm/swift/releases/download/swiftwasm-release-v20190510/swiftwasm-sdk-linux.tar.xz"]
 }
 
 var codeArea = null;
