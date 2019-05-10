@@ -8,6 +8,25 @@ body {
 	font-family: sans-serif;
 }
 </style>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script>
+// https://stackoverflow.com/a/49776528
+if (navigator.doNotTrack !== '1') {
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = 'https://www.googletagmanager.com/gtag/js?id=UA-ADD-YOUR-ID';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-139968289-1');
+}
+</script>
 </head>
 <body>
 <h1>SwiftWasm privacy policy</h1>
