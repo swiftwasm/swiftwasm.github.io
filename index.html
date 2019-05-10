@@ -39,16 +39,16 @@ a, a:hover, a:visited {
 #askvocolink {
   color: #f05138;
 }
-#code-run {
+.btn-swift {
   background-color: #f05138;
   border-color: #f05138;
   color: white;
 }
-#code-run:hover {
+.btn-swift:hover {
   background-color: #cc4530;
   border-color: #cc4530;
 }
-#code-run:active {
+.btn-swift:active {
   background-color: #b33c2a;
   border-color: #b33c2a;
 }
@@ -109,7 +109,7 @@ if (navigator.doNotTrack !== '1') {
   <noscript>Please enable JavaScript to use the Try it Now area.</noscript>
   <div class="row">
     <div class="col-lg">
-      <div><button id="code-run" class="btn">Run</button></div>
+      <div><button id="code-run" class="btn btn-swift">Run</button></div>
       <textarea id="code-area" class="text-monospace" disabled></textarea>
     </div>
     <div class="col-lg">
@@ -154,6 +154,11 @@ if (navigator.doNotTrack !== '1') {
     <p><strong>Thanks.</strong></p>
   </div>
   <div class="container text-center" id="footer">
+    <p>Find us on:
+        <a href="https://github.com/swiftwasm">Github<a>
+        <a href="https://twitter.com/swiftwasm">Twitter</a>
+        <a href="https://github.com/swiftwasm" id="emaillink">Email</a>
+      </p>
     <p><a href="https://github.com/swiftwasm/swiftwasm.org">Website source</a> | This website may collect information about you to improve your experience. <a href="privacy.html" target="_blank">Privacy policy</a>.</p>
   </div>
 </div>

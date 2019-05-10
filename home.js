@@ -29,6 +29,7 @@ function pageLoaded() {
     outputArea = document.getElementById("output-area");
     downloadWasmButton = document.getElementById("code-download-wasm");
     setupDownloadArea();
+    document.getElementById("emaillink").href = "mailto:" + atob("aGVsbG9Ac3dpZnR3YXNtLm9yZw==");
 }
 
 async function runClicked() {
