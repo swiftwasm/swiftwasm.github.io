@@ -1,0 +1,26 @@
+{
+  "name": "swiftwasm.org",
+  "version": "1.0.0",
+  "description": "Homepage for the SwiftWasm project.",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/swiftwasm/swiftwasm.org.git"
+  },
+  "keywords": [],
+  "author": "",
+  "private": true,
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/swiftwasm/swiftwasm.org/issues"
+  },
+  "homepage": "https://github.com/swiftwasm/swiftwasm.org#readme",
+  "dependencies": {
+    "@wasmer/wasi": "^0.9.1",
+    "@wasmer/wasmfs": "^0.9.1",
+    "javascript-kit-swift": "0.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
