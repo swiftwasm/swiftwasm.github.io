@@ -9,7 +9,7 @@ let package = Package(
       .executable(name: "App", targets: ["swiftwasm.org"])
     ],
     dependencies: [
-      .package(url: "https://github.com/kateinoigakukun/JavaScriptKit", .revision("0.1.0")),
+      .package(url: "https://github.com/kateinoigakukun/JavaScriptKit", .branch("master")),
     ],
     targets: [
         .target(

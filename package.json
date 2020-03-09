@@ -14,13 +14,18 @@
     "url": "https://github.com/swiftwasm/swiftwasm.org/issues"
   },
   "homepage": "https://github.com/swiftwasm/swiftwasm.org#readme",
+  "scripts": {
+    "build": "webpack --mode development",
+    "start": "webpack-dev-server"
+  },
   "dependencies": {
     "@wasmer/wasi": "^0.9.1",
     "@wasmer/wasmfs": "^0.9.1",
-    "javascript-kit-swift": "0.1.0"
+    "javascript-kit-swift": "file:../../kateinoigakukun/JavaScriptKit/Runtime"
   },
   "devDependencies": {
     "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }
