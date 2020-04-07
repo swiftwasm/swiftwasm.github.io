@@ -1,6 +1,6 @@
 "use strict";
-const kCompileApi = "http://localhost:3000/v1/compile";
-const kPrecompiledDemo = false;
+const kCompileApi = "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
+const kPrecompiledDemo = true;
 
 const kDownloadUrls = {
     macos: ["macOS", "https://github.com/swiftwasm/swift/releases/download/swiftwasm-release-v20190510/swiftwasm-sdk-macos.tar.xz"],
@@ -13,12 +13,12 @@ var outputArea = null;
 var downloadWasmButton = null;
 var currentDownloadURL = null;
 
-function print(text) {
+function writeOutputArea(text) {
     var element = document.getElementById('output-area');
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
     console.log(text);
     if (element) {
-        element.textContent += text + "\n";
+        element.textContent += text;
         element.scrollTop = element.scrollHeight; // focus on bottom
     }
 }
@@ -109,20 +109,18 @@ import { WasmFs } from "@wasmer/wasmfs";
  */
 async function runWasm(wasmBuffer) {
     window.wasi_wasm_buffer = wasmBuffer;
-    print("Running WebAssembly...");
+    writeOutputArea("Running WebAssembly...");
     const wasmFs = new WasmFs();
-    const outputArea = document.getElementById("output-area")
+    const decoder = new TextDecoder("utf-8");
 
     wasmFs.volume.fds[1].node.write = (stdoutBuffer) => {
-        const text = new TextDecoder("utf-8").decode(stdoutBuffer);
-        console.log(text)
-        outputArea.textContent += text + "\n";
-        outputArea.scrollTop = outputArea.scrollHeight; // focus on bottom
+        const text = decoder.decode(stdoutBuffer);
+        writeOutputArea(text)
         return stdoutBuffer.length;
     }
 
     wasmFs.volume.fds[2].node.write = (stderrBuffer) => {
-        const text = new TextDecoder("utf-8").decode(stderrBuffer);
+        const text = decoder.decode(stderrBuffer);
         console.error(text)
         return stdoutBuffer.length;
     }
@@ -138,7 +136,7 @@ async function runWasm(wasmBuffer) {
         env: {
             executeScript: (ptr, len) => {
                 const uint8Memory = new Uint8Array(_instance.exports.memory.buffer)
-                const script = new TextDecoder("utf-8").decode(uint8Memory.subarray(ptr, ptr + len));
+                const script = decoder.decode(uint8Memory.subarray(ptr, ptr + len));
                 new Function(script)()
             }
         }
@@ -263,7 +261,8 @@ print("The 10th Fibonacci number is \\(fib(n: 10))")
 @_silgen_name("executeScript")
 func executeScript(script: UnsafePointer<UInt8>, length: Int32)
 
-var scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \(11)');"
+// Here's a string holding JavaScript code, with some string interpolation:
+var scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \\(fib(n: 11))');"
 // and we can execute it.
 scriptSrc.withUTF8 { bufferPtr in
    executeScript(script: bufferPtr.baseAddress!, length: Int32(bufferPtr.count))
