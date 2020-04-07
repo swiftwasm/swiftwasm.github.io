@@ -1,6 +1,6 @@
 "use strict";
-const kCompileApi = "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
-const kPrecompiledDemo = true;
+const kCompileApi = "http://localhost:3000/v1/compile";
+const kPrecompiledDemo = false;
 
 const kDownloadUrls = {
     macos: ["macOS", "https://github.com/swiftwasm/swift/releases/download/swiftwasm-release-v20190510/swiftwasm-sdk-macos.tar.xz"],
@@ -13,8 +13,14 @@ var outputArea = null;
 var downloadWasmButton = null;
 var currentDownloadURL = null;
 
-function polyfillReady(polyfillFunction) {
-    startWasiPolyfill = polyfillFunction;
+function print(text) {
+    var element = document.getElementById('output-area');
+    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+    console.log(text);
+    if (element) {
+        element.textContent += text + "\n";
+        element.scrollTop = element.scrollHeight; // focus on bottom
+    }
 }
 
 function pageLoaded() {
@@ -79,8 +85,9 @@ function parseResultBuffer(resultBuffer) {
         uint32View = new Uint32Array(resultBuffer.slice(0, 8));
     }
     if (uint32View == null || uint32View[0] != 0xdec0ded0) {
-        return {output:
-            {success: false, output: textDecoder.decode(resultBuffer)}
+        return {
+            output:
+                { success: false, output: textDecoder.decode(resultBuffer) }
         };
     }
     const jsonLength = uint32View[1];
@@ -94,22 +101,66 @@ function parseResultBuffer(resultBuffer) {
     return output;
 }
 
+import { WASI } from "@wasmer/wasi";
+import { WasmFs } from "@wasmer/wasmfs";
+
 /**
  * @param wasmBuffer {ArrayBuffer}
  */
-function runWasm(wasmBuffer) {
+async function runWasm(wasmBuffer) {
     window.wasi_wasm_buffer = wasmBuffer;
-    Module.print("Running WebAssembly...");
-    _handleFiles();
+    print("Running WebAssembly...");
+    const wasmFs = new WasmFs();
+    const outputArea = document.getElementById("output-area")
+
+    wasmFs.volume.fds[1].node.write = (stdoutBuffer) => {
+        const text = new TextDecoder("utf-8").decode(stdoutBuffer);
+        console.log(text)
+        outputArea.textContent += text + "\n";
+        outputArea.scrollTop = outputArea.scrollHeight; // focus on bottom
+        return stdoutBuffer.length;
+    }
+
+    wasmFs.volume.fds[2].node.write = (stderrBuffer) => {
+        const text = new TextDecoder("utf-8").decode(stderrBuffer);
+        console.error(text)
+        return stdoutBuffer.length;
+    }
+    const wasi = new WASI({
+        bindings: {
+            ...WASI.defaultBindings,
+            fs: wasmFs.fs
+        }
+    });
+
+    let _instance;
+    const importObject = {
+        env: {
+            executeScript: (ptr, len) => {
+                const uint8Memory = new Uint8Array(_instance.exports.memory.buffer)
+                const script = new TextDecoder("utf-8").decode(uint8Memory.subarray(ptr, ptr + len));
+                new Function(script)()
+            }
+        }
+    }
+
+    const { instance } = await WebAssembly.instantiate(wasmBuffer, {
+        wasi_snapshot_preview1: wasi.wasiImport,
+        wasi_unstable: wasi.wasiImport,
+        ...importObject,
+    });
+
+    _instance = instance
+    wasi.start(instance);
 }
 
 function populateResultsArea(compileResult) {
     console.log(compileResult);
     const output = compileResult.output;
     outputArea.textContent = output.output;
-    downloadWasmButton.style.display = output.success? "": "none";
+    downloadWasmButton.style.display = output.success ? "" : "none";
     if (compileResult.binary) {
-        const blob = new Blob([compileResult.binary], {type: "application/wasm"});
+        const blob = new Blob([compileResult.binary], { type: "application/wasm" });
         currentDownloadURL = URL.createObjectURL(blob);
         downloadWasmButton.href = currentDownloadURL;
     }
@@ -131,16 +182,12 @@ function handleCodeAreaKeyPress(event) {
     return true;
 }
 
-function wasi_handle_error(e) {
-    Module.print(e.toString() + "\n" + e.stack);
-}
-
 function setupDownloadArea() {
     const downloadButton = document.getElementById("download-button");
     const platform = detectPlatform();
     const isWindows = platform == "windows";
-    const platformActual = isWindows? "linux": platform;
-    const platformName = isWindows? "Windows": kDownloadUrls[platformActual][0];
+    const platformActual = isWindows ? "linux" : platform;
+    const platformName = isWindows ? "Windows" : kDownloadUrls[platformActual][0];
     const downloadUrl = kDownloadUrls[platformActual][1];
     downloadButton.textContent = "Download for " + platformName;
     downloadButton.href = downloadUrl;
@@ -213,18 +260,14 @@ print("The 10th Fibonacci number is \\(fib(n: 10))")
 
 // we can also run JavaScript from Swift.
 
-func executeScript(script: String) {
-    let magicFd:Int32 = -1337
-    if write(magicFd, script, strlen(script)) == -1 {
-        print("Can't execute script: please use the SwiftWasm polyfill on https://swiftwasm.org.")
-        print(script)
-    }
-}
+@_silgen_name("executeScript")
+func executeScript(script: UnsafePointer<UInt8>, length: Int32)
 
-// Here's a string holding JavaScript code, with some string interpolation:
-let scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \\(fib(n: 11))');"
+var scriptSrc = "alert('Hello from Swift! The 11th Fibonacci number is \(11)');"
 // and we can execute it.
-executeScript(script: scriptSrc)
+scriptSrc.withUTF8 { bufferPtr in
+   executeScript(script: bufferPtr.baseAddress!, length: Int32(bufferPtr.count))
+}
 `;
 
 pageLoaded();
