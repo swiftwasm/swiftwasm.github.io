@@ -1,7 +1,7 @@
 #!/bin/bash
 
+rm -rf dist
+mkdir -p dist
+cp -rf public/* dist/
 npm run build
-cp -rf demo_compiled dist/demo_compiled
-cp CNAME dist/CNAME
-
 ./node_modules/.bin/gh-pages -d dist/

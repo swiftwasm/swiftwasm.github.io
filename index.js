@@ -109,7 +109,7 @@ import { WasmFs } from "@wasmer/wasmfs";
  */
 async function runWasm(wasmBuffer) {
     window.wasi_wasm_buffer = wasmBuffer;
-    writeOutputArea("Running WebAssembly...");
+    writeOutputArea("Running WebAssembly...\n");
     const wasmFs = new WasmFs();
     const decoder = new TextDecoder("utf-8");
 
