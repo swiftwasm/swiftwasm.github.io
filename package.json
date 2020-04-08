@@ -16,6 +16,7 @@
   "homepage": "https://github.com/swiftwasm/swiftwasm.org#readme",
   "scripts": {
     "build": "webpack --mode development",
+    "build:prod": "webpack --mode production",
     "start": "webpack-dev-server"
   },
   "dependencies": {
