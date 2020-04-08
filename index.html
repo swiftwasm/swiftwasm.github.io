@@ -1,180 +1,99 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SwiftWasm - compile Swift to WebAssembly</title>
-<meta property="og:title" content="SwiftWasm - compile Swift to WebAssembly" />
-<meta property="og:locale" content="en_US" />
-<meta name="description" content="Run Swift in browsers: SwiftWasm compiles your Swift code to WebAssembly." />
-<meta property="og:description" content="Run Swift in browsers: SwiftWasm compiles your Swift code to WebAssembly." />
-<link rel="canonical" href="https://swiftwasm.org/" />
-<meta property="og:url" content="https://swiftwasm.org/" />
-<meta property="og:site_name" content="SwiftWasm - compile Swift to WebAssembly" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=" crossorigin="anonymous" />
-<style>
-.sw-jumbotron {
-  color: white;
-  background-color: #f05138;
-  background-image: linear-gradient(to bottom, #f05138 70%, #fbaf40);
-  border-radius: 0;
-}
-#code-area {
-  width: 100%;
-  height: 500px;
-  font-size: 10pt;
-}
-#output-area {
-  width: 100%;
-  max-height: 500px;
-  overflow-y: scroll;
-  white-space: pre-wrap;
-  font-size: 10pt;
-  overflow-wrap: anywhere;
-}
-a, a:hover, a:visited {
-  color: inherit;
-  text-decoration: underline;
-}
-#download-button {
-  color: #f05138;
-  text-decoration: none;
-}
-#other-platforms {
-  font-size: 10pt;
-}
-#askvocolink {
-  color: #f05138;
-}
-.btn-swift {
-  background-color: #f05138;
-  border-color: #f05138;
-  color: white;
-}
-.btn-swift:hover {
-  background-color: #cc4530;
-  border-color: #cc4530;
-}
-.btn-swift:active {
-  background-color: #b33c2a;
-  border-color: #b33c2a;
-}
-#footer {
-  font-size: 10pt;
-}
-.red-background {
-  background-color: #f05138;
-  color: white;
-  width: 100%;
-}
-</style>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script>
-// https://stackoverflow.com/a/49776528
-if (navigator.doNotTrack !== '1') {
-    (function () {
-        var ga = document.createElement('script');
-        ga.type = 'text/javascript';
-        ga.async = true;
-        ga.src = 'https://www.googletagmanager.com/gtag/js?id=UA-139968289-1';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(ga, s);
-    })();
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-139968289-1');
-}
-</script>
-</head>
-<body>
-<div class="jumbotron sw-jumbotron">
-  <div class="container">
+Html Webpack Plugin:
+<pre>
+  Error: html-webpack-plugin could not minify the generated output.
+  In production mode the html minifcation is enabled by default.
+  If you are not generating a valid html output please disable it manually.
+  You can do so by adding the following setting to your HtmlWebpackPlugin config:
+  |
+  |    minify: false
+  |
+  See https://github.com/jantimon/html-webpack-plugin#options for details.
+  For parser dedicated bugs please create an issue here:
+  https://danielruf.github.io/html-minifier-terser/
+  Parse Error: <input type="email" value="" name="EMAIL" class="required email form-control-sm  m id="mce-EMAIL" placeholder="Email">
+      <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" na  me="b_34f61d506587d4af83fd2c79f_a452cde3d3" tabindex="-1" value=""></div>
+      <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class  ="button btn-sm btn-swift">
+    </div>
+  </form>
+  </div>
+  <div class="container shadow rounded border my-3 py-3">
+    <h2>Try Swift on WebAssembly now</h2>
+    <p>Compile Swift in the cloud and run in your browser.</p>
+    <noscript>Please enable JavaScript to use the Try it Now area.</noscript>
     <div class="row">
-      <div class="col-md">
-        <h1>Run Swift in browsers</h1>
-        <p><strong>SwiftWasm</strong> compiles your <strong>Swift</strong> code to <strong>WebAssembly</strong>.</string></p>
-        <p><a href="https://github.com/swiftwasm/swift">Source on GitHub</a> </p>
-        <p><a href="https://github.com/apple/swift/pull/24684">View our Swift pull request</a></p>
+      <div class="col-lg">
+        <div><button id="code-run" class="btn btn-swift">Run</button></div>
+        <textarea id="code-area" class="text-monospace" disabled></textarea>
       </div>
-      <div class="col-md-4">
-        <a href="https://github.com/swiftwasm/swift/releases" id="download-button" class="btn btn-lg btn-light btn-block">Download</a>
-        <div id="other-platforms">
-          <span id="windows-wsl"></span><a href="https://github.com/swiftwasm/swift/releases">Other platforms</a>
+      <div class="col-lg">
+        <div>Output:
+          <a href="#" id="code-download-wasm" style="display: none"
+            download="program.wasm">Download wasm</a>
         </div>
+        <div id="output-area" class="text-monospace"></div>
       </div>
     </div>
   </div>
-</div>
-<div class="container my-3 py-3">
-  <h5>Want to keep up with Swift news on your smart speaker? <a href="https://askvoco.com" id="askvocolink">Follow us on Voco.</a></h5>
-  <form action="https://swiftwasm.us20.list-manage.com/subscribe/post?u=34f61d506587d4af83fd2c79f&amp;id=a452cde3d3" method="post" id="mc-embedded-subscribe-form-inline" name="mc-embedded-subscribe-form-inline" class="validate" target="_blank">
-    Or sign up for our mailing list:
-    <input type="email" value="" name="EMAIL" class="required email form-control-smm id="mce-EMAIL" placeholder="Email">
-    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_34f61d506587d4af83fd2c79f_a452cde3d3" tabindex="-1" value=""></div>
-    <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button btn-sm btn-swift">
-  </div>
-</form>
-</div>
-<div class="container shadow rounded border my-3 py-3">
-  <h2>Try Swift on WebAssembly now</h2>
-  <p>Compile Swift in the cloud and run in your browser.</p>
-  <noscript>Please enable JavaScript to use the Try it Now area.</noscript>
-  <div class="row">
-    <div class="col-lg">
-      <div><button id="code-run" class="btn btn-swift">Run</button></div>
-      <textarea id="code-area" class="text-monospace" disabled></textarea>
-    </div>
-    <div class="col-lg">
-      <div>Output:
-        <a href="#" id="code-download-wasm" style="display: none"
-          download="program.wasm">Download wasm</a>
+  <div class="container my-3 py-3">
+    <h2>How you can help</h2>
+    <div class="row">
+      <div class="col-lg">
+        <h4>Resolve remaining issues</h4>
+        <p>Many features in Swift aren't working on WebAssembly yet.</p>
+        <p>Want to help? See <a href="https://github.com/apple/swift/pull/24684">our pull requ  est</a> for info on what still needs to be done.</p>
       </div>
-      <div id="output-area" class="text-monospace"></div>
+      <div class="col-lg">
+        <h4>Upstream patches</h4>
+        <p>We're working on integrating our patches into the official Swift compiler.
+        <p>Want to help? See <a href="https://github.com/apple/swift/pull/24684">the pull requ  est</a> to see which commits needs to be submitted.</p>
+      </div>
+      <div class="col-lg">
+        <h4>Design web bindings</h4>
+        <p>Wouldn't it be nice to invoke web APIs directly from Swift?</p>
+        <p>Want to help? Examine similar projects such as <a href="https://github.com/rustwasm  /wasm-bindgen">Rust's wasm-bindgen</a> or <a href="https://gowebapi.github.io">gowebapi's we  bidl-bind</a> to see how they can be adapted to Swift.</p>
+      </div>
+    </div>
+    <div>If you would like to help, <a href="https://github.com/swiftwasm">join us</a>.</div>
+  </div>
+  <div class="red-background my-0 py-3">
+    <div class="container">
+      <h2>Credits</h2>
+      <p>Getting Swift to work on WebAssembly required the hard work of many people:</p>
+      <ul>
+        <li>Patches for Swift: <a href="https://github.com/zhuowei">@zhuowei</a>, <a href="htt  ps://github.com/kateinoigakukun">@kateinoigakukun</a>, <a href="https://github.com/MaxDesiat  ov">@MaxDesiatov</a>, <a href="https://github.com/ddunbar">@ddunbar</a>, and <a href="https:  //github.com/patcheng">@patcheng</a></li>
+        <li>Advice and assistance: <a href="https://github.com/jrose-apple">@jrose-apple</a>,   <a href="https://github.com/sbc100">@sbc100</a>, <a href="https://github.com/m4b">@m4b</a>,   <a href="https://github.com/philipc">@philipc</a>, <a href="https://github.com/jedisct1">@je  disct1</a>, <a href="https://github.com/pchickey">@pchickey</a></li>
+        <li>and many others.</li>
+      </ul>
+      <p><strong>Thanks.</strong></p>
+    </div>
+    <div class="container text-center" id="footer">
+      <p>Find us on:
+          <a href="https://github.com/swiftwasm">Github<a>
+          <a href="https://twitter.com/swiftwasm">Twitter</a>
+          <a href="https://github.com/swiftwasm" id="emaillink">Email</a>
+        </p>
+      <p><a href="https://github.com/swiftwasm/swiftwasm.org">Website source</a> | This websit  e may collect information about you to improve your experience. <a href="privacy.html" targe  t="_blank">Privacy policy</a>.</p>
     </div>
   </div>
-</div>
-<div class="container my-3 py-3">
-  <h2>How you can help</h2>
-  <div class="row">
-    <div class="col-lg">
-      <h4>Resolve remaining issues</h4>
-      <p>Many features in Swift aren't working on WebAssembly yet.</p>
-      <p>Want to help? See <a href="https://github.com/apple/swift/pull/24684">our pull request</a> for info on what still needs to be done.</p>
-    </div>
-    <div class="col-lg">
-      <h4>Upstream patches</h4>
-      <p>We're working on integrating our patches into the official Swift compiler.
-      <p>Want to help? See <a href="https://github.com/apple/swift/pull/24684">the pull request</a> to see which commits needs to be submitted.</p>
-    </div>
-    <div class="col-lg">
-      <h4>Design web bindings</h4>
-      <p>Wouldn't it be nice to invoke web APIs directly from Swift?</p>
-      <p>Want to help? Examine similar projects such as <a href="https://github.com/rustwasm/wasm-bindgen">Rust's wasm-bindgen</a> or <a href="https://gowebapi.github.io">gowebapi's webidl-bind</a> to see how they can be adapted to Swift.</p>
-    </div>
-  </div>
-  <div>If you would like to help, <a href="https://github.com/swiftwasm">join us</a>.</div>
-</div>
-<div class="red-background my-0 py-3">
-  <div class="container">
-    <h2>Credits</h2>
-    <p>Getting Swift to work on WebAssembly required the hard work of many people:</p>
-    <ul>
-      <li>Patches for Swift: <a href="https://github.com/zhuowei">@zhuowei</a>, <a href="https://github.com/kateinoigakukun">@kateinoigakukun</a>, <a href="https://github.com/MaxDesiatov">@MaxDesiatov</a>, <a href="https://github.com/ddunbar">@ddunbar</a>, and <a href="https://github.com/patcheng">@patcheng</a></li>
-      <li>Advice and assistance: <a href="https://github.com/jrose-apple">@jrose-apple</a>, <a href="https://github.com/sbc100">@sbc100</a>, <a href="https://github.com/m4b">@m4b</a>, <a href="https://github.com/philipc">@philipc</a>, <a href="https://github.com/jedisct1">@jedisct1</a>, <a href="https://github.com/pchickey">@pchickey</a></li>
-      <li>and many others.</li>
-    </ul>
-    <p><strong>Thanks.</strong></p>
-  </div>
-  <div class="container text-center" id="footer">
-    <p>Find us on:
-        <a href="https://github.com/swiftwasm">Github<a>
-        <a href="https://twitter.com/swiftwasm">Twitter</a>
-        <a href="https://github.com/swiftwasm" id="emaillink">Email</a>
-      </p>
-    <p><a href="https://github.com/swiftwasm/swiftwasm.org">Website source</a> | This website may collect information about you to improve your experience. <a href="privacy.html" target="_blank">Privacy policy</a>.</p>
-  </div>
-</div>
-<script src="main.js"></script></body>
-</html>
+  <script src="main.js"></script></body>
+  </html>
+  
+  - htmlparser.js:244 new HTMLParser
+    [swiftwasm.org]/[html-minifier-terser]/src/htmlparser.js:244:13
+  
+  - htmlminifier.js:981 minify
+    [swiftwasm.org]/[html-minifier-terser]/src/htmlminifier.js:981:3
+  
+  - htmlminifier.js:1342 Object.exports.minify
+    [swiftwasm.org]/[html-minifier-terser]/src/htmlminifier.js:1342:16
+  
+  - index.js:1011 HtmlWebpackPlugin.minifyHtml
+    [swiftwasm.org]/[html-webpack-plugin]/index.js:1011:46
+  
+  - index.js:451 HtmlWebpackPlugin.postProcessHtml
+    [swiftwasm.org]/[html-webpack-plugin]/index.js:451:40
+  
+  - index.js:276 
+    [swiftwasm.org]/[html-webpack-plugin]/index.js:276:25
+  
+</pre>
