@@ -2,5 +2,6 @@
 
 npm run build
 cp -rf demo_compiled dist/demo_compiled
+cp CNAME dist/CNAME
 
-git subtree push --prefix dist/ origin gh-pages
+./node_modules/.bin/gh-pages -d dist/
