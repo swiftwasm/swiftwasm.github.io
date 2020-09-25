@@ -24,6 +24,10 @@ resources](https://github.com/apple/swift-evolution/blob/master/proposals/0271-p
 allowing you to include additional static content to your SwiftWasm apps. These could be styles,
 scripts, images, fonts, or whatever other data you'd like to ship with your app.
 
+The next version of `carton` will also ship with the latest version of [wasmer.js](https://github.com/wasmerio/wasmer-js/),
+which is one of our dependencies. The new version includes fixes compatibility of SwiftWasm apps
+with Safari 14 that was released recently.
+
 ## Toolchain/SDK work
 
 The upstream Swift toolchain has switched to use the upcoming LLVM 11 API in the `main` branch.
