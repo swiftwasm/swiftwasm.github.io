@@ -53,6 +53,11 @@ main `swiftwasm` branch in [swiftwasm/swift#1832](https://github.com/swiftwasm/s
 
 ## Upstream PRs
 
+The divergence between the SwiftWasm toolchain and SDKs is still significant and causes regular
+conflicts that we have to resolve manually. We're working on making our changes available upstream,
+but this takes a lot of time, as especially toolchain PRs need high level of polish to be accepted.
+Here's a list of PRs that had some progress in September:
+
 ### Foundation
 
 * Add locking primitives for `TARGET_OS_WASI` in `CFLocking.h`
