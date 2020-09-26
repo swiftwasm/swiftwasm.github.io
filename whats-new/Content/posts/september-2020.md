@@ -13,6 +13,37 @@ namely `JSError`, `JSDate`, `JSTimer` (which corresponds to `setTimeout`/`setInt
 manages closure lifetime for you), `JSString` and `JSPromise`. We now also have [documentation 
 published automatically](https://swiftwasm.github.io/JavaScriptKit/) for the `main` branch.
 
+We also saw a lot of great progress with [DOMKit](https://github.com/swiftwasm/DOMKit) in September,
+which was unblocked by the recent additions to JavaScriptKit. With DOMKit we're going to get 
+type-safe access to the most common browser DOM APIs. It will be expanded in the future to
+support even more features that currently are only available via JavaScriptKit through force
+unwrapping and dynamic casting.
+
+That is, compare the current API you get with JavaScriptKit:
+
+```swift
+import JavaScriptKit
+
+let document = JSObject.global.document.object!
+
+let divElement = document.createElement!("div").object!
+divElement.innerText = "Hello, world"
+let body = document.body.object!
+_ = body.appendChild!(divElement)
+```
+
+to an equivalent snippet that could look like this with DOMKit:
+
+```swift
+import DOMKit
+
+let document = global.document
+
+let divElement = document.createElement("div")
+divElement.innerText = "Hello, world"
+document.body.appendChild(divElement)
+```
+
 ## Developer tools
 
 Following the new 0.7.0 release of JavaScriptKit, a new release of [carton](https://carton.dev)
