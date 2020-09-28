@@ -7,6 +7,11 @@
       "label": "publish run",
       "type": "shell",
       "command": "publish run"
+    },
+    {
+      "label": "regenerate content",
+      "type": "shell",
+      "command": "swift run SwiftWasmBlog"
     }
   ]
 }

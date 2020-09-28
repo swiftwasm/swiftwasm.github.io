@@ -56,6 +56,24 @@
         }
       },
       {
+        "package": "Splash",
+        "repositoryURL": "https://github.com/johnsundell/splash.git",
+        "state": {
+          "branch": null,
+          "revision": "f25dd8c9f16be1f81a152f6861d7216c3c9302da",
+          "version": "0.14.0"
+        }
+      },
+      {
+        "package": "SplashPublishPlugin",
+        "repositoryURL": "https://github.com/johnsundell/SplashPublishPlugin.git",
+        "state": {
+          "branch": null,
+          "revision": "34bb50bd83b2a40c63afc35f090c76619dc149ce",
+          "version": "0.1.0"
+        }
+      },
+      {
         "package": "Sweep",
         "repositoryURL": "https://github.com/johnsundell/sweep.git",
         "state": {
