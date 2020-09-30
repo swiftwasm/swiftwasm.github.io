@@ -62,14 +62,33 @@ nav li a.selected {
 h1 {
   margin-bottom: 20px;
   font-size: 2em;
+  font-family: serif;
+  font-weight: 700;
 }
 
 h2 {
   margin: 20px 0;
+  font-family: serif;
+  font-weight: 600;
+}
+
+h3 {
+  margin: 0.75em 0;
+  font-family: serif;
+  font-weight: 600;
+}
+
+li {
+  margin: 0.4em 0;
+}
+
+code {
+  font-size: 1.15rem;
 }
 
 p {
-  margin-bottom: 10px;
+  line-height: 1.4;
+  margin-bottom: 0.5em;
 }
 
 a {

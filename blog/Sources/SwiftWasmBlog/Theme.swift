@@ -4,8 +4,16 @@
  *  MIT license, see LICENSE file for details
  */
 
+import Foundation
 import Plot
 import Publish
+
+private let dateFormatter: DateFormatter = {
+  let result = DateFormatter()
+  result.dateStyle = .long
+  result.timeStyle = .none
+  return result
+}()
 
 extension Theme {
   /// The default "Foundation" theme that Publish ships with, a very
@@ -59,6 +67,19 @@ private struct Factory<Site: Website>: HTMLFactory {
       .header(for: context, selectedSection: item.sectionID),
       .wrapper(
         .article(
+          .p(
+            .element(named: "small", nodes: [
+              .text("Published on "),
+              .element(named: "time", nodes: [
+                .text(dateFormatter.string(from: item.date)),
+                .attribute(
+                  named: "datetime",
+                  value: ISO8601DateFormatter().string(from: item.date)
+                ),
+                .text(".")
+              ])
+            ])
+          ),
           .div(
             .class("content"),
             .contentBody(item.body)
