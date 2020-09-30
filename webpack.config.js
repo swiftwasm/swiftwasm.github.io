@@ -3,7 +3,27 @@ const outputPath = path.resolve(__dirname, 'dist');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './index.js',
+
+  entry: './src/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+        ],
+      },
+    ],
+  },
+  resolve: {
+    extensions: [ '.tsx', '.ts', '.js' ],
+  },
   output: {
     filename: 'main.js',
     path: outputPath,

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-rm -rf dist
-mkdir -p dist
-cp -rf public/* dist/
-npm run build:prod
+set -ex
+
+./prod_build.sh
 ./node_modules/.bin/gh-pages -d dist/
