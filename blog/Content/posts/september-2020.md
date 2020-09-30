@@ -1,5 +1,5 @@
 ---
-date: 2020-10-01 14:34
+date: 2020-09-30 14:34
 description: An update on what happened in the SwiftWasm ecosystem during September 2020.
 tags: update, javascriptkit
 ---
@@ -7,11 +7,20 @@ tags: update, javascriptkit
 
 ## Libraries
 
-[JavaScriptKit 0.7.0](https://github.com/swiftwasm/JavaScriptKit/releases/tag/0.7.0) has been
+[JavaScriptKit 0.7](https://github.com/swiftwasm/JavaScriptKit/releases/tag/0.7.0) has been
 released. It adds multiple new types bridged from JavaScript, 
 namely `JSError`, `JSDate`, `JSTimer` (which corresponds to `setTimeout`/`setInterval` calls and 
 manages closure lifetime for you), `JSString` and `JSPromise`. We now also have [documentation 
 published automatically](https://swiftwasm.github.io/JavaScriptKit/) for the `main` branch.
+
+New features of JavaScriptKit allowed us to start working on closer integration with
+[OpenCombine](https://github.com/OpenCombine/OpenCombine). The current progress is available in the
+new [OpenCombineJS](https://github.com/swiftwasm/OpenCombineJS) repository, and we plan to tag a
+release for it soon. At the moment it has a `JSScheduler` class wrapping `JSTimer` that implements
+[the `Scheduler` protocol](https://developer.apple.com/documentation/combine/scheduler), enabling
+you to use `debounce` and other time-based operators. Additionally, OpenCombineJS now provides a
+helper `publisher` property on `JSPromise`, which allows you to integrate any promise-based API with
+an OpenCombine pipeline.
 
 We also saw a lot of great progress with [DOMKit](https://github.com/swiftwasm/DOMKit) in September,
 which was unblocked by the recent additions to JavaScriptKit. With DOMKit we're going to get 
@@ -44,20 +53,25 @@ divElement.innerText = "Hello, world"
 document.body.appendChild(divElement)
 ```
 
+Lastly on the libraries front, [Tokamak 0.4](https://github.com/TokamakUI/Tokamak/releases) is now
+available, enabling compatibility with the new version of JavaScriptKit, and utilizing the 
+aforementioned `JSScheduler` implementation.
+
 ## Developer tools
 
-Following the new 0.7.0 release of JavaScriptKit, a new release of [carton](https://carton.dev)
-will be tagged soon, shipping with the appropriate JavaScriptKit runtime compatible with the new release.
-It will also include support for the new `carton bundle` command, allowing you to produce a 
-directory with all the build output ready for deployment. Notably, both `carton bundle` and
-`carton dev` will support [SwiftPM package 
+Following the new 0.7 release of JavaScriptKit, [`carton`
+0.6](https://github.com/swiftwasm/carton/releases/tag/0.6.0) has been tagged , shipping with the
+appropriate JavaScriptKit runtime compatible with the new release. It also includes support for the
+new `carton bundle` command that produces a directory with optimized build output ready for
+deployment on a CDN or any other server. Notably, both `carton bundle` and `carton dev` support
+[SwiftPM package
 resources](https://github.com/apple/swift-evolution/blob/master/proposals/0271-package-manager-resources.md),
 allowing you to include additional static content to your SwiftWasm apps. These could be styles,
 scripts, images, fonts, or whatever other data you'd like to ship with your app.
 
-The next version of `carton` will also ship with the latest version of [wasmer.js](https://github.com/wasmerio/wasmer-js/),
-which is one of our dependencies. The new version includes fixes compatibility of SwiftWasm apps
-with Safari 14 that was released recently.
+This version of `carton` also ships with the latest version of
+[wasmer.js](https://github.com/wasmerio/wasmer-js/), which is one of our dependencies. This update
+brings compatibility of SwiftWasm apps with Safari 14 that was released recently.
 
 ## Toolchain/SDK work
 
