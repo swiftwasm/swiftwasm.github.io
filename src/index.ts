@@ -19,7 +19,7 @@ const kDownloadUrls: {
   linux: ["Linux", "https://github.com/swiftwasm/swift/releases"],
 };
 
-var codeArea: HTMLTextAreaElement | null = null;
+var codeMirror: any = null;
 var runButton: HTMLButtonElement | null = null;
 var outputArea: HTMLElement | null = null;
 var downloadWasmButton: HTMLAnchorElement | null = null;
@@ -45,12 +45,12 @@ function writeOutputArea(text: string) {
 }
 
 function pageLoaded() {
-  codeArea = document.getElementById("code-area") as HTMLTextAreaElement;
+  const codeArea = document.getElementById("code-area") as HTMLTextAreaElement;
   codeArea.disabled = false;
   if (codeArea.value == "") {
     codeArea.value = kDefaultDemoScript;
   }
-  const codeMirror = CodeMirror.fromTextArea(codeArea, {
+  codeMirror = CodeMirror.fromTextArea(codeArea, {
     mode: "swift",
     indentUnit: 4,
     lineNumbers: true,
@@ -74,7 +74,7 @@ async function runClicked() {
   if (currentDownloadURL) {
     URL.revokeObjectURL(currentDownloadURL);
   }
-  const code = codeArea.value;
+  const code = codeMirror.getValue();
   try {
     const compileResult = await compileCode(code);
     populateResultsArea(compileResult);
