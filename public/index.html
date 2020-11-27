@@ -78,6 +78,10 @@
       color: white;
       width: 100%;
     }
+
+    #navigation p {
+      margin-left: 15px;
+    }
   </style>
 </head>
 
@@ -90,11 +94,13 @@
           <p><strong>SwiftWasm</strong> compiles your <strong>Swift</strong> code to <strong>WebAssembly</strong>.
             </string>
           </p>
-          <p><a href="https://blog.swiftwasm.org">Blog</a></p>
-          <p><a href="https://discord.gg/ashJW8T8yp">Discord</a></p>
-          <p><a href="https://book.swiftwasm.org">Documentation</a></p>
-          <p><a href="https://github.com/swiftwasm/swift">Source on GitHub</a> </p>
-          <p><a href="https://github.com/apple/swift/pull/24684">View our Swift pull request</a></p>
+          <div class="row" id="navigation">
+            <p><a href="https://blog.swiftwasm.org">Blog</a></p>
+            <p><a href="https://discord.gg/ashJW8T8yp">Discord</a></p>
+            <p><a href="https://book.swiftwasm.org">Documentation</a></p>
+            <p><a href="https://github.com/swiftwasm/swift">Source on GitHub</a> </p>
+            <p><a href="https://github.com/apple/swift/pull/24684">View our Swift pull request</a></p>
+          </div>
         </div>
         <div class="col-md-4">
           <a href="https://github.com/swiftwasm/swift/releases" id="download-button"
@@ -184,8 +190,9 @@
     <div class="container text-center" id="footer">
       <p>Find us on:
         <a href="https://github.com/swiftwasm">GitHub<a>
-            <a href="https://twitter.com/swiftwasm">Twitter</a>
-            <a href="https://github.com/swiftwasm" id="emaillink">Email</a>
+        <a href="https://twitter.com/swiftwasm">Twitter</a>
+        <a href="https://github.com/swiftwasm" id="emaillink">Email</a>
+        <a href="https://discord.gg/ashJW8T8yp">Discord</a>
       </p>
       <p><a href="https://github.com/swiftwasm/swiftwasm.org">Website source</a> | This website may collect information
         about you to improve your experience. <a href="privacy.html" target="_blank">Privacy policy</a>.</p>
