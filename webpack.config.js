@@ -3,7 +3,7 @@ const outputPath = path.resolve(__dirname, 'dist');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-
+  mode: 'production',
   entry: './src/index.ts',
   module: {
     rules: [
@@ -27,9 +27,6 @@ module.exports = {
   output: {
     filename: 'main.js',
     path: outputPath,
-  },
-  devServer: {
-    inline: true,
   },
   devtool: 'inline-source-map',
   plugins: [

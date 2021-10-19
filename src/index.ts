@@ -3,9 +3,6 @@ import CodeMirror from "codemirror";
 import "codemirror/mode/swift/swift";
 import "codemirror/lib/codemirror.css";
 
-import { WASI } from "@wasmer/wasi";
-import { WasmFs } from "@wasmer/wasmfs";
-
 const kCompileApi =
   "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
 const kPrecompiledDemo = true;
@@ -128,6 +125,8 @@ function parseResultBuffer(resultBuffer: ArrayBuffer): CompilationResult {
 
 async function runWasm(wasmBuffer: ArrayBuffer) {
   writeOutputArea("Running WebAssembly...\n");
+  const { WasmFs } = await import("@wasmer/wasmfs");
+
   const wasmFs = new WasmFs();
   const decoder = new TextDecoder("utf-8");
 
@@ -142,6 +141,8 @@ async function runWasm(wasmBuffer: ArrayBuffer) {
     console.error(text);
     return stderrBuffer.byteLength;
   };
+
+  const { WASI } = await import("@wasmer/wasi");
   const wasi = new WASI({
     bindings: {
       ...WASI.defaultBindings,
