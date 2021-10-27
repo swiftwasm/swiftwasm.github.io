@@ -28,7 +28,7 @@ module.exports = {
     filename: 'main.js',
     path: outputPath,
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve('./public/index.html'),
