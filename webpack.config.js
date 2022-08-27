@@ -34,4 +34,5 @@ module.exports = {
       template: path.resolve('./public/index.html'),
     }),
   ],
+  performance: { hints: false }
 };

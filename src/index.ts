@@ -3,8 +3,7 @@ import CodeMirror from "codemirror";
 import "codemirror/mode/swift/swift";
 import "codemirror/lib/codemirror.css";
 
-const kCompileApi =
-  "https://us-central1-swiftwasm-zhuowei.cloudfunctions.net/compile/v1/compile";
+const kCompileApi = "https://swiftwasm-compiler-api-mgv5x4syda-uc.a.run.app";
 const kPrecompiledDemo = true;
 
 const kDownloadUrls: {
@@ -22,12 +21,12 @@ var outputArea: HTMLElement | null = null;
 var downloadWasmButton: HTMLAnchorElement | null = null;
 var currentDownloadURL: string | null = null;
 
-interface CompilationResult {
-  output: {
-    success: boolean;
-    output: string;
-  };
-  binary?: ArrayBuffer;
+type CompilationResult = {
+  success: true,
+  binary: ArrayBuffer,
+} | {
+  success: false;
+  output: string;
 }
 
 function writeOutputArea(text: string) {
@@ -75,7 +74,7 @@ async function runClicked() {
   try {
     const compileResult = await compileCode(code);
     populateResultsArea(compileResult);
-    if (compileResult.output.success) {
+    if (compileResult.success) {
       runWasm(compileResult.binary);
     }
   } catch (e) {
@@ -84,43 +83,31 @@ async function runClicked() {
   runButton.disabled = false;
 }
 
-async function compileCode(code: string) {
+async function compileCode(code: string): Promise<CompilationResult> {
   if (kPrecompiledDemo && code.trim() == kDefaultDemoScript.trim()) {
     return await getPrecompiledDemo();
   }
   const fetchResult = await fetch(kCompileApi, {
     method: "POST",
     body: JSON.stringify({
-      src: code,
+      mainCode: code,
+      action: "emitExecutable"
     }),
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const resultBuffer = await fetchResult.arrayBuffer();
-  return parseResultBuffer(resultBuffer);
-}
-
-function parseResultBuffer(resultBuffer: ArrayBuffer): CompilationResult {
-  const textDecoder = new TextDecoder("utf-8");
-  let uint32View = null;
-  if (resultBuffer.byteLength >= 8) {
-    uint32View = new Uint32Array(resultBuffer.slice(0, 8));
+  if (fetchResult.ok) {
+    const resultBuffer = await fetchResult.arrayBuffer();
+    return { binary: resultBuffer, success: true };
+  } else {
+    type CompileApiError = {
+      stderr: string;
+      statusCode: number;
+    }
+    const error: CompileApiError = await fetchResult.json();
+    return { success: false, output: error.stderr };
   }
-  if (uint32View == null || uint32View[0] != 0xdec0ded0) {
-    return {
-      output: { success: false, output: textDecoder.decode(resultBuffer) },
-    };
-  }
-  const jsonLength = uint32View[1];
-  const jsonBuffer = resultBuffer.slice(8, 8 + jsonLength);
-  let output: CompilationResult = {
-    output: JSON.parse(textDecoder.decode(jsonBuffer)),
-  };
-  if (8 + jsonLength < resultBuffer.byteLength) {
-    output.binary = resultBuffer.slice(8 + jsonLength);
-  }
-  return output;
 }
 
 async function runWasm(wasmBuffer: ArrayBuffer) {
@@ -175,11 +162,15 @@ async function runWasm(wasmBuffer: ArrayBuffer) {
 
 function populateResultsArea(compileResult: CompilationResult) {
   console.log(compileResult);
-  const output = compileResult.output;
-  outputArea.textContent = output.output;
+  const output = compileResult;
+  if (output.success === false) {
+    outputArea.textContent = output.output;
+  } else {
+    outputArea.textContent = "";
+  }
   downloadWasmButton.style.display = output.success ? "" : "none";
-  if (compileResult.binary) {
-    const blob = new Blob([compileResult.binary], { type: "application/wasm" });
+  if (output.success) {
+    const blob = new Blob([output.binary], { type: "application/wasm" });
     currentDownloadURL = URL.createObjectURL(blob);
     downloadWasmButton.href = currentDownloadURL;
   }
@@ -213,14 +204,11 @@ function detectPlatform() {
   return "linux";
 }
 
-async function getPrecompiledDemo() {
+async function getPrecompiledDemo(): Promise<CompilationResult> {
   const fetchResult = await fetch("/demo_compiled/program.wasm.txt");
   const resultBuffer = await fetchResult.arrayBuffer();
   return {
-    output: {
-      success: true,
-      output: "",
-    },
+    success: true,
     binary: resultBuffer,
   };
 }
