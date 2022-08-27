@@ -2,6 +2,7 @@ import CodeMirror from "codemirror";
 
 import "codemirror/mode/swift/swift";
 import "codemirror/lib/codemirror.css";
+import { SwiftRuntime } from "javascript-kit-swift";
 import kDefaultDemoScript from './demo.swift?raw';
 
 const kCompileApi = "https://swiftwasm-compiler-api-mgv5x4syda-uc.a.run.app";
@@ -111,6 +112,25 @@ async function compileCode(code: string): Promise<CompilationResult> {
   }
 }
 
+export const wrapWASI = (wasiObject: any) => {
+  // PATCH: @wasmer-js/wasi@0.x forgets to call `refreshMemory` in `clock_res_get`,
+  // which writes its result to memory view. Without the refresh the memory view,
+  // it accesses a detached array buffer if the memory is grown by malloc.
+  // But they wasmer team discarded the 0.x codebase at all and replaced it with
+  // a new implementation written in Rust. The new version 1.x is really unstable
+  // and not production-ready as far as katei investigated in Apr 2022.
+  // So override the broken implementation of `clock_res_get` here instead of
+  // fixing the wasi polyfill.
+  // Reference: https://github.com/wasmerio/wasmer-js/blob/55fa8c17c56348c312a8bd23c69054b1aa633891/packages/wasi/src/index.ts#L557
+  const original_clock_res_get = wasiObject.wasiImport["clock_res_get"];
+
+  wasiObject.wasiImport["clock_res_get"] = function() {
+      wasiObject.refreshMemory();
+      return Reflect.apply(original_clock_res_get, this, arguments);
+  };
+  return wasiObject.wasiImport;
+};
+
 async function runWasm(wasmBuffer: ArrayBuffer) {
   writeOutputArea("Running WebAssembly...\n");
   const { WasmFs } = await import("@wasmer/wasmfs");
@@ -137,28 +157,20 @@ async function runWasm(wasmBuffer: ArrayBuffer) {
       fs: wasmFs.fs,
     },
   });
-
-  let _instance: WebAssembly.Instance;
-  const importObject = {
-    env: {
-      executeScript: (ptr: number, len: number) => {
-        const uint8Memory = new Uint8Array(
-          (_instance.exports.memory as any).buffer
-        );
-        const script = decoder.decode(uint8Memory.subarray(ptr, ptr + len));
-        new Function(script)();
-      },
-    },
-  };
+  const swift = new SwiftRuntime();
 
   const { instance } = await WebAssembly.instantiate(wasmBuffer, {
     wasi_snapshot_preview1: wasi.wasiImport,
     wasi_unstable: wasi.wasiImport,
-    ...importObject,
+    javascript_kit: swift.wasmImports as any,
   });
 
-  _instance = instance;
-  wasi.start(instance);
+  wasi.setMemory(instance.exports.memory as any);
+  (instance.exports._initialize as any)();
+  if (instance.exports.swjs_library_version) {
+    swift.setInstance(instance);
+  }
+  (instance.exports.main as any)();
 }
 
 function populateResultsArea(compileResult: CompilationResult) {

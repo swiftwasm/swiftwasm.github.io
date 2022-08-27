@@ -19,7 +19,9 @@
     "build:prod": "webpack --mode production",
     "start": "webpack-dev-server"
   },
-  "dependencies": {},
+  "dependencies": {
+    "javascript-kit-swift": "^0.15.0"
+  },
   "devDependencies": {
     "@types/codemirror": "5.60.5",
     "@wasmer/wasi": "^0.12.0",
