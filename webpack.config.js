@@ -19,6 +19,10 @@ module.exports = {
           'css-loader',
         ],
       },
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source',
+      }
     ],
   },
   resolve: {
